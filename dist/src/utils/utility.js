@@ -34,8 +34,10 @@ exports.drawingSchema = joi_1.default.object().keys({
     description: joi_1.default.string().required(),
     refNo: joi_1.default.string().required(),
     price: joi_1.default.string().required(),
-    floor: joi_1.default.string().required(),
-    details: joi_1.default.string().required(),
+    drawing_details: joi_1.default.array().items(joi_1.default.object().keys({
+        floor: joi_1.default.string().required(),
+        details: joi_1.default.string().required(),
+    })),
 });
 exports.option = {
     abortEarly: false,

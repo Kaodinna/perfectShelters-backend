@@ -38,14 +38,18 @@ exports.drawingSchema = new mongoose_1.default.Schema({
         required: true,
         type: String,
     },
-    floor: {
-        required: true,
-        type: String,
-    },
-    details: {
-        required: true,
-        type: String,
-    },
+    drawing_details: [
+        {
+            floor: {
+                type: String,
+                required: true,
+            },
+            details: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
 }, { timestamps: true });
 const Drawing = mongoose_1.default.model("drawing", exports.drawingSchema);
 exports.default = Drawing;

@@ -19,7 +19,7 @@ const db_config_1 = require("../config/db.config");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const AddDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { frontElevation, rightElevation, leftElevation, type, category, description, refNo, price, floor, details, } = req.body;
+        const { frontElevation, rightElevation, leftElevation, type, category, description, refNo, price, drawing_details, } = req.body;
         const validateResult = utility_1.drawingSchema.validate(req.body, utility_1.option);
         if (validateResult.error) {
             return res.status(400).json({
@@ -37,8 +37,7 @@ const AddDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 description,
                 refNo,
                 price,
-                floor,
-                details,
+                drawing_details,
             });
             const payload = {
                 email: newDrawing.refNo, // Include other necessary fields

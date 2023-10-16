@@ -15,8 +15,7 @@ export const AddDrawing = async (req: Request, res: Response) => {
       description,
       refNo,
       price,
-      floor,
-      details,
+      drawing_details,
     } = req.body;
 
     const validateResult = drawingSchema.validate(req.body, option);
@@ -37,8 +36,7 @@ export const AddDrawing = async (req: Request, res: Response) => {
         description,
         refNo,
         price,
-        floor,
-        details,
+        drawing_details,
       });
 
       const payload = {

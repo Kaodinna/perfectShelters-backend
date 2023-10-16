@@ -21,8 +21,12 @@ export const drawingSchema = Joi.object().keys({
   description: Joi.string().required(),
   refNo: Joi.string().required(),
   price: Joi.string().required(),
-  floor: Joi.string().required(),
-  details: Joi.string().required(),
+  drawing_details: Joi.array().items(
+    Joi.object().keys({
+      floor: Joi.string().required(),
+      details: Joi.string().required(),
+    })
+  ),
 });
 
 export const option = {

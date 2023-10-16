@@ -10,8 +10,7 @@ export interface DrawingAttribute {
   description: string;
   refNo: string;
   price: string;
-  floor: string;
-  details: string;
+  drawing_details: Array<{ floor: string; details: string }>;
 }
 
 export const drawingSchema = new mongoose.Schema<DrawingAttribute>(
@@ -48,14 +47,18 @@ export const drawingSchema = new mongoose.Schema<DrawingAttribute>(
       required: true,
       type: String,
     },
-    floor: {
-      required: true,
-      type: String,
-    },
-    details: {
-      required: true,
-      type: String,
-    },
+    drawing_details: [
+      {
+        floor: {
+          type: String,
+          required: true,
+        },
+        details: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
