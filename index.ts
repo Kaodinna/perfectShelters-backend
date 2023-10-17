@@ -10,8 +10,8 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
-
-app.use(cors());
+const allowedOrigins = ["https://perfect-shelters.vercel.app"];
+app.use(cors({ origin: allowedOrigins }));
 
 const url = `mongodb+srv://perfectshelterng:chibuike123@cluster0.8avq6xm.mongodb.net/`;
 // const url = `mongodb+srv://kaodi-investment:houseparty22@cluster0.nzmmrt4.mongodb.net/`
