@@ -8,4 +8,5 @@ const drawingController_1 = require("../controllers/drawingController");
 const router = express_1.default.Router();
 router.post("/add-drawing", drawingController_1.AddDrawing);
 router.get("/get-drawings", drawingController_1.getAllDrawings);
+router.get("/get-drawings/:id", drawingController_1.getDrawingById);
 exports.default = router;

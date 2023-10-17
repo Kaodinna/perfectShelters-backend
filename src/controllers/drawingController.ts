@@ -85,3 +85,28 @@ export const getAllDrawings = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getDrawingById = async (req: Request, res: Response) => {
+  const drawingId = req.params.id; // Extract the drawing ID from the request parameters
+
+  try {
+    // Use the `Drawing` model to find the drawing by its ID
+    const drawing = await Drawing.findById(drawingId);
+
+    if (!drawing) {
+      return res.status(404).json({
+        message: "Drawing not found",
+      });
+    }
+
+    return res.status(200).json({
+      status: "Success",
+      data: drawing,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
