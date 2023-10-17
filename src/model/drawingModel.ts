@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export interface DrawingAttribute {
-  _id?: any;
+  _id?: string;
   frontElevation: string;
   rightElevation: string;
   leftElevation: string;
@@ -15,9 +15,13 @@ export interface DrawingAttribute {
 
 export const drawingSchema = new mongoose.Schema<DrawingAttribute>(
   {
+    _id: {
+      type: mongoose.Schema.ObjectId,
+      required: true,
+    },
     frontElevation: {
       type: String,
-      rquired: true,
+      required: true,
     },
     rightElevation: {
       type: String,
