@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddDrawing = void 0;
+exports.getAllDrawings = exports.AddDrawing = void 0;
 const utility_1 = require("../utils/utility");
 const drawingModel_1 = __importDefault(require("../model/drawingModel"));
 const db_config_1 = require("../config/db.config");
@@ -63,3 +63,25 @@ const AddDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.AddDrawing = AddDrawing;
+const getAllDrawings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Use the `Drawing` model to find all drawings
+        const drawings = yield drawingModel_1.default.find();
+        if (drawings) {
+            return res.status(200).json({
+                status: "Success",
+                data: drawings,
+            });
+        }
+        return res.status(404).json({
+            message: "No drawings found",
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal Server Error",
+        });
+    }
+});
+exports.getAllDrawings = getAllDrawings;

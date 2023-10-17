@@ -62,3 +62,26 @@ export const AddDrawing = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getAllDrawings = async (req: Request, res: Response) => {
+  try {
+    // Use the `Drawing` model to find all drawings
+    const drawings = await Drawing.find();
+
+    if (drawings) {
+      return res.status(200).json({
+        status: "Success",
+        data: drawings,
+      });
+    }
+
+    return res.status(404).json({
+      message: "No drawings found",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
