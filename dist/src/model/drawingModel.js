@@ -8,7 +8,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 exports.drawingSchema = new mongoose_1.default.Schema({
     frontElevation: {
         type: String,
-        rquired: true,
+        required: true,
     },
     rightElevation: {
         type: String,

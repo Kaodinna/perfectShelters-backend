@@ -110,3 +110,42 @@ export const getDrawingById = async (req: Request, res: Response) => {
     });
   }
 };
+interface Query {
+  type?: string;
+  category?: string;
+}
+
+export const getDrawingsByParams = async (req: Request, res: Response) => {
+  try {
+    const type = req.query.type as string; // Cast type to string
+    const category = req.query.category as string; // Cast category to string
+
+    const query: Query = {};
+
+    if (type) {
+      query.type = type;
+    }
+
+    if (category) {
+      query.category = category;
+    }
+
+    const drawings = await Drawing.find(query);
+
+    if (drawings.length > 0) {
+      return res.status(200).json({
+        status: "Success",
+        data: drawings,
+      });
+    } else {
+      return res.status(404).json({
+        message: "No drawings found for the provided search parameters.",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};

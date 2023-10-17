@@ -9,4 +9,5 @@ const router = express_1.default.Router();
 router.post("/add-drawing", drawingController_1.AddDrawing);
 router.get("/get-drawings", drawingController_1.getAllDrawings);
 router.get("/get-drawings/:id", drawingController_1.getDrawingById);
+router.get("/search-drawings/:type?/:category?", drawingController_1.getDrawingsByParams);
 exports.default = router;

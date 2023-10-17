@@ -13,7 +13,8 @@ const bucket_route_1 = __importDefault(require("./src/routes/bucket.route"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
-app.use((0, cors_1.default)());
+const allowedOrigins = ["https://perfect-shelters.vercel.app"];
+app.use((0, cors_1.default)({ origin: allowedOrigins }));
 const url = `mongodb+srv://perfectshelterng:chibuike123@cluster0.8avq6xm.mongodb.net/`;
 // const url = `mongodb+srv://kaodi-investment:houseparty22@cluster0.nzmmrt4.mongodb.net/`
 mongoose_1.default

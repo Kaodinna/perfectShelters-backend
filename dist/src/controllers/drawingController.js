@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDrawingById = exports.getAllDrawings = exports.AddDrawing = void 0;
+exports.getDrawingsByParams = exports.getDrawingById = exports.getAllDrawings = exports.AddDrawing = void 0;
 const utility_1 = require("../utils/utility");
 const drawingModel_1 = __importDefault(require("../model/drawingModel"));
 const db_config_1 = require("../config/db.config");
@@ -108,3 +108,35 @@ const getDrawingById = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getDrawingById = getDrawingById;
+const getDrawingsByParams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const type = req.query.type; // Cast type to string
+        const category = req.query.category; // Cast category to string
+        const query = {};
+        if (type) {
+            query.type = type;
+        }
+        if (category) {
+            query.category = category;
+        }
+        const drawings = yield drawingModel_1.default.find(query);
+        if (drawings.length > 0) {
+            return res.status(200).json({
+                status: "Success",
+                data: drawings,
+            });
+        }
+        else {
+            return res.status(404).json({
+                message: "No drawings found for the provided search parameters.",
+            });
+        }
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal Server Error",
+        });
+    }
+});
+exports.getDrawingsByParams = getDrawingsByParams;
