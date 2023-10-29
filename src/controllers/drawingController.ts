@@ -83,7 +83,7 @@ export const getDrawingById = async (req: Request, res: Response) => {
 
   try {
     // Use the `Drawing` model to find the drawing by its ID
-    const drawing = await Drawing.findById(drawingId);
+    const drawing = await Drawing.findById(drawingId).populate("comments");
 
     if (!drawing) {
       return res.status(404).json({

@@ -82,7 +82,7 @@ const getDrawingById = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const drawingId = req.params.id; // Extract the drawing ID from the request parameters
     try {
         // Use the `Drawing` model to find the drawing by its ID
-        const drawing = yield drawingModel_1.default.findById(drawingId);
+        const drawing = yield drawingModel_1.default.findById(drawingId).populate("comments");
         if (!drawing) {
             return res.status(404).json({
                 message: "Drawing not found",
