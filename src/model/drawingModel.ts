@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface DrawingAttribute {
   frontElevation: string;
@@ -10,6 +10,7 @@ export interface DrawingAttribute {
   refNo: string;
   price: string;
   drawing_details: Array<{ floor: string; details: string }>;
+  comments: Array<Schema.Types.ObjectId>;
 }
 
 export const drawingSchema = new mongoose.Schema<DrawingAttribute>(
@@ -58,6 +59,7 @@ export const drawingSchema = new mongoose.Schema<DrawingAttribute>(
         },
       },
     ],
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   },
   { timestamps: true }
 );

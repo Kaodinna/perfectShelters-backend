@@ -12,11 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDrawingsByParams = exports.getDrawingById = exports.getAllDrawings = exports.AddDrawing = void 0;
+exports.getDrawingsByType = exports.getDrawingsByParams = exports.getDrawingById = exports.getAllDrawings = exports.AddDrawing = void 0;
 const utility_1 = require("../utils/utility");
 const drawingModel_1 = __importDefault(require("../model/drawingModel"));
-const db_config_1 = require("../config/db.config");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const AddDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { frontElevation, rightElevation, leftElevation, type, category, description, refNo, price, drawing_details, } = req.body;
@@ -39,11 +37,6 @@ const AddDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 price,
                 drawing_details,
             });
-            const payload = {
-                email: newDrawing.refNo, // Include other necessary fields
-            };
-            const secret = `${db_config_1.JWT_KEY}verifyThisaccount`; // Ensure that you have JWT_KEY set in your environment variables
-            const signature = jsonwebtoken_1.default.sign(payload, secret);
             if (newDrawing) {
                 return res.status(200).json({
                     status: "Success",
@@ -66,7 +59,7 @@ exports.AddDrawing = AddDrawing;
 const getAllDrawings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Use the `Drawing` model to find all drawings
-        const drawings = yield drawingModel_1.default.find();
+        const drawings = yield drawingModel_1.default.find().populate("comments");
         if (drawings) {
             return res.status(200).json({
                 status: "Success",
@@ -140,3 +133,28 @@ const getDrawingsByParams = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.getDrawingsByParams = getDrawingsByParams;
+const getDrawingsByType = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const type = "bungalow"; // Define the type you want to filter by
+        // Use Mongoose to find all drawings with the specified type
+        const drawings = yield drawingModel_1.default.find({ type });
+        if (drawings.length > 0) {
+            return res.status(200).json({
+                status: "Success",
+                data: drawings,
+            });
+        }
+        else {
+            return res.status(404).json({
+                message: "No drawings with the specified type found.",
+            });
+        }
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal Server Error",
+        });
+    }
+});
+exports.getDrawingsByType = getDrawingsByType;

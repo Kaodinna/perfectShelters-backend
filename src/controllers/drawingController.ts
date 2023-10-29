@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { drawingSchema, option } from "../utils/utility";
 import Drawing from "../model/drawingModel";
-import { JWT_KEY } from "../config/db.config";
-import jwt from "jsonwebtoken";
 
 export const AddDrawing = async (req: Request, res: Response) => {
   try {
@@ -39,12 +37,6 @@ export const AddDrawing = async (req: Request, res: Response) => {
         drawing_details,
       });
 
-      const payload = {
-        email: newDrawing.refNo, // Include other necessary fields
-      };
-      const secret = `${JWT_KEY}verifyThisaccount`; // Ensure that you have JWT_KEY set in your environment variables
-      const signature = jwt.sign(payload, secret);
-
       if (newDrawing) {
         return res.status(200).json({
           status: "Success",
@@ -66,7 +58,7 @@ export const AddDrawing = async (req: Request, res: Response) => {
 export const getAllDrawings = async (req: Request, res: Response) => {
   try {
     // Use the `Drawing` model to find all drawings
-    const drawings = await Drawing.find();
+    const drawings = await Drawing.find().populate("comments");
 
     if (drawings) {
       return res.status(200).json({
@@ -140,6 +132,31 @@ export const getDrawingsByParams = async (req: Request, res: Response) => {
     } else {
       return res.status(404).json({
         message: "No drawings found for the provided search parameters.",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const getDrawingsByType = async (req: Request, res: Response) => {
+  try {
+    const type = "bungalow"; // Define the type you want to filter by
+
+    // Use Mongoose to find all drawings with the specified type
+    const drawings = await Drawing.find({ type });
+
+    if (drawings.length > 0) {
+      return res.status(200).json({
+        status: "Success",
+        data: drawings,
+      });
+    } else {
+      return res.status(404).json({
+        message: "No drawings with the specified type found.",
       });
     }
   } catch (error) {

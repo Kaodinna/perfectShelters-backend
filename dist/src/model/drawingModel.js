@@ -50,6 +50,7 @@ exports.drawingSchema = new mongoose_1.default.Schema({
             },
         },
     ],
+    comments: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Comment" }],
 }, { timestamps: true });
 const Drawing = mongoose_1.default.model("drawing", exports.drawingSchema);
 exports.default = Drawing;

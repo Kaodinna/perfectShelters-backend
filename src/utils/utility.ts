@@ -12,10 +12,18 @@ export const registerSchema = Joi.object().keys({
   lastName: Joi.string().required(),
   address: Joi.string().required(),
 });
+export const commentSchema = Joi.object().keys({
+  fullName: Joi.string().required(),
+  emailAddress: Joi.string().required(),
+  phoneNumber: Joi.string().required(),
+  comment: Joi.string().required(),
+  drawingId: Joi.string().required(),
+});
+
 export const drawingSchema = Joi.object().keys({
   frontElevation: Joi.string().required(),
   rightElevation: Joi.string().required(),
-  leftElevation: Joi.string().pattern(new RegExp("[a-zA-Z0-9]{3,30}$")),
+  leftElevation: Joi.string().required(),
   type: Joi.string().required(),
   category: Joi.string().required(),
   description: Joi.string().required(),

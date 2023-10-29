@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validatePassword = exports.loginSchema = exports.Generatesignature = exports.GeneratePassword = exports.GenerateSalt = exports.option = exports.drawingSchema = exports.registerSchema = void 0;
+exports.validatePassword = exports.loginSchema = exports.Generatesignature = exports.GeneratePassword = exports.GenerateSalt = exports.option = exports.drawingSchema = exports.commentSchema = exports.registerSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -25,10 +25,17 @@ exports.registerSchema = joi_1.default.object().keys({
     lastName: joi_1.default.string().required(),
     address: joi_1.default.string().required(),
 });
+exports.commentSchema = joi_1.default.object().keys({
+    fullName: joi_1.default.string().required(),
+    emailAddress: joi_1.default.string().required(),
+    phoneNumber: joi_1.default.string().required(),
+    comment: joi_1.default.string().required(),
+    drawingId: joi_1.default.string().required(),
+});
 exports.drawingSchema = joi_1.default.object().keys({
     frontElevation: joi_1.default.string().required(),
     rightElevation: joi_1.default.string().required(),
-    leftElevation: joi_1.default.string().pattern(new RegExp("[a-zA-Z0-9]{3,30}$")),
+    leftElevation: joi_1.default.string().required(),
     type: joi_1.default.string().required(),
     category: joi_1.default.string().required(),
     description: joi_1.default.string().required(),
