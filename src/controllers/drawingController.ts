@@ -166,3 +166,70 @@ export const getDrawingsByType = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteDrawing = async (req: Request, res: Response) => {
+  console.log("boyyy", req.params);
+  try {
+    const drawingId = req.params.id;
+
+    // Check if the product exists
+    const productToDelete = await Drawing.findById(drawingId);
+    if (!productToDelete) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    // Delete the product
+    await Drawing.findByIdAndDelete(drawingId);
+    return res.status(200).json({
+      status: "Success",
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const editDrawing = async (req: Request, res: Response) => {
+  try {
+    const productId = req.params.productId;
+    const { type, category, description, price, refNo, drawing_details } =
+      req.body;
+
+    // Find the product by ID
+    const drawing = await Drawing.findById(productId).exec();
+
+    // Check if the product exists
+    if (!drawing) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    // Update the product fields
+    drawing.type = type;
+    drawing.category = category;
+    drawing.description = description;
+    drawing.price = price;
+    drawing.refNo = refNo;
+    drawing.drawing_details = drawing_details;
+
+    // Save the updated product
+    const updatedProduct = await drawing.save();
+
+    // Respond with the updated product data
+    return res.status(200).json({
+      status: "Success",
+      data: updatedProduct,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};

@@ -16,9 +16,9 @@ exports.uploadToCloudinary = void 0;
 const cloudinary_1 = __importDefault(require("cloudinary"));
 const uploadToCloudinary = (path) => __awaiter(void 0, void 0, void 0, function* () {
     cloudinary_1.default.v2.config({
-        cloud_name: "diwozc824",
-        api_key: "867414457582548",
-        api_secret: "kLJx16cFR-Yyc53QgwdyO_LY3YY",
+        cloud_name: "dgugfsbon",
+        api_key: "698253428546552",
+        api_secret: "HFk6gq_M1Aw8_JPvbYNlycDp7IY",
     });
     return yield cloudinary_1.default.v2.uploader.upload(path);
 });

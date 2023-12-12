@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDrawingsByType = exports.getDrawingsByParams = exports.getDrawingById = exports.getAllDrawings = exports.AddDrawing = void 0;
+exports.editDrawing = exports.deleteDrawing = exports.getDrawingsByType = exports.getDrawingsByParams = exports.getDrawingById = exports.getAllDrawings = exports.AddDrawing = void 0;
 const utility_1 = require("../utils/utility");
 const drawingModel_1 = __importDefault(require("../model/drawingModel"));
 const AddDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -158,3 +158,64 @@ const getDrawingsByType = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getDrawingsByType = getDrawingsByType;
+const deleteDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("boyyy", req.params);
+    try {
+        const drawingId = req.params.id;
+        // Check if the product exists
+        const productToDelete = yield drawingModel_1.default.findById(drawingId);
+        if (!productToDelete) {
+            return res.status(404).json({
+                message: "Product not found",
+            });
+        }
+        // Delete the product
+        yield drawingModel_1.default.findByIdAndDelete(drawingId);
+        return res.status(200).json({
+            status: "Success",
+            message: "Product deleted successfully",
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal Server Error",
+        });
+    }
+});
+exports.deleteDrawing = deleteDrawing;
+const editDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const productId = req.params.productId;
+        const { type, category, description, price, refNo, drawing_details } = req.body;
+        // Find the product by ID
+        const drawing = yield drawingModel_1.default.findById(productId).exec();
+        // Check if the product exists
+        if (!drawing) {
+            return res.status(404).json({
+                message: "Product not found",
+            });
+        }
+        // Update the product fields
+        drawing.type = type;
+        drawing.category = category;
+        drawing.description = description;
+        drawing.price = price;
+        drawing.refNo = refNo;
+        drawing.drawing_details = drawing_details;
+        // Save the updated product
+        const updatedProduct = yield drawing.save();
+        // Respond with the updated product data
+        return res.status(200).json({
+            status: "Success",
+            data: updatedProduct,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal Server Error",
+        });
+    }
+});
+exports.editDrawing = editDrawing;
