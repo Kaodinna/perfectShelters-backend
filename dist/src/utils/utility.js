@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validatePassword = exports.loginSchema = exports.Generatesignature = exports.GeneratePassword = exports.GenerateSalt = exports.option = exports.drawingSchema = exports.commentSchema = exports.registerSchema = void 0;
+exports.validatePassword = exports.loginSchema = exports.Generatesignature = exports.GeneratePassword = exports.GenerateSalt = exports.option = exports.pictureSchema = exports.ConstructionSchema = exports.drawingSchema = exports.commentSchema = exports.registerSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -45,6 +45,15 @@ exports.drawingSchema = joi_1.default.object().keys({
         floor: joi_1.default.string().required(),
         details: joi_1.default.string().required(),
     })),
+});
+exports.ConstructionSchema = joi_1.default.object().keys({
+    coverPhoto: joi_1.default.string().required(),
+    title: joi_1.default.string().required(),
+});
+exports.pictureSchema = joi_1.default.object().keys({
+    picture: joi_1.default.string().required(),
+    details: joi_1.default.string().required(),
+    drawingId: joi_1.default.string().required(),
 });
 exports.option = {
     abortEarly: false,

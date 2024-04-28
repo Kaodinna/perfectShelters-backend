@@ -37,6 +37,17 @@ export const drawingSchema = Joi.object().keys({
   ),
 });
 
+export const ConstructionSchema = Joi.object().keys({
+  coverPhoto: Joi.string().required(),
+  title: Joi.string().required(),
+});
+
+export const pictureSchema = Joi.object().keys({
+  picture: Joi.string().required(),
+  details: Joi.string().required(),
+  drawingId: Joi.string().required(),
+});
+
 export const option = {
   abortEarly: false,
   errors: {

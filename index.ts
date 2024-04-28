@@ -6,6 +6,8 @@ import drawingRouter from "./src/routes/drawingRoute";
 import commentRouter from "./src/routes/commentRoute";
 import cors from "cors";
 import bucketRouter from "./src/routes/bucket.route";
+import constructionRouter from "./src/routes/construction.route";
+import pictureRouter from "./src/routes/picture.route"
 
 dotenv.config();
 
@@ -59,3 +61,5 @@ app.use("/users", userRouter);
 app.use("/bucket", bucketRouter);
 app.use("/drawing", drawingRouter);
 app.use("/comment", commentRouter);
+app.use("/construct", constructionRouter);
+app.use("/picture", pictureRouter);
