@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ConstructionSchema, option } from "../utils/utility";
 import Construction from "../model/construction.model";
+import Pictures from "../model/pictures.model";
 export const AddConstruction = async (req: Request, res: Response) => {
   try {
     const { coverPhoto, title } = req.body;
@@ -66,6 +67,8 @@ export const deleteConstruct = async (req: Request, res: Response) => {
       });
     }
     // Delete the product
+    // Delete pictures associated with the construction
+    await Pictures.deleteMany({ drawingId });
     await Construction.findByIdAndDelete(drawingId);
     return res.status(200).json({
       status: "Success",

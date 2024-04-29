@@ -9,6 +9,6 @@ import {
 const router: Router = express.Router();
 router.post("/add-construction", AddConstruction);
 router.get("/get-all-construction", getAllConstructions);
-router.delete("/delete-construction", deleteConstruct);
+router.delete("/delete-construction/:id", deleteConstruct);
 router.get("/get-construction/:id", getConstructById);
 export default router;

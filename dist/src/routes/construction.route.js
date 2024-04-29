@@ -8,6 +8,6 @@ const construction_controller_1 = require("../controllers/construction.controlle
 const router = express_1.default.Router();
 router.post("/add-construction", construction_controller_1.AddConstruction);
 router.get("/get-all-construction", construction_controller_1.getAllConstructions);
-router.delete("/delete-construction", construction_controller_1.deleteConstruct);
+router.delete("/delete-construction/:id", construction_controller_1.deleteConstruct);
 router.get("/get-construction/:id", construction_controller_1.getConstructById);
 exports.default = router;

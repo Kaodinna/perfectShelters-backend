@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getConstructById = exports.deleteConstruct = exports.getAllConstructions = exports.AddConstruction = void 0;
 const utility_1 = require("../utils/utility");
 const construction_model_1 = __importDefault(require("../model/construction.model"));
+const pictures_model_1 = __importDefault(require("../model/pictures.model"));
 const AddConstruction = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { coverPhoto, title } = req.body;
@@ -76,6 +77,8 @@ const deleteConstruct = (req, res) => __awaiter(void 0, void 0, void 0, function
             });
         }
         // Delete the product
+        // Delete pictures associated with the construction
+        yield pictures_model_1.default.deleteMany({ drawingId });
         yield construction_model_1.default.findByIdAndDelete(drawingId);
         return res.status(200).json({
             status: "Success",
