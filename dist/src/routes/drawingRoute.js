@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const drawingController_1 = require("../controllers/drawingController");
 const router = express_1.default.Router();
 router.post("/add-drawing", drawingController_1.AddDrawing);
-router.post("/edit-drawing", drawingController_1.editDrawing);
+router.post("/edit-drawing/:id", drawingController_1.editDrawing);
 router.delete("/delete-drawing/:id", drawingController_1.deleteDrawing);
 router.get("/get-drawings", drawingController_1.getAllDrawings);
 router.get("/get-drawings/:id", drawingController_1.getDrawingById);

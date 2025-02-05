@@ -196,32 +196,20 @@ export const deleteDrawing = async (req: Request, res: Response) => {
 
 export const editDrawing = async (req: Request, res: Response) => {
   try {
-    const productId = req.params.productId;
-    const { type, category, description, price, refNo, drawing_details } =
-      req.body;
+    const productId = req.params.id;
+    const { description, price } = req.body;
 
-    // Find the product by ID
     const drawing = await Drawing.findById(productId).exec();
 
-    // Check if the product exists
     if (!drawing) {
       return res.status(404).json({
         message: "Product not found",
       });
     }
-
-    // Update the product fields
-    drawing.type = type;
-    drawing.category = category;
     drawing.description = description;
     drawing.price = price;
-    drawing.refNo = refNo;
-    drawing.drawing_details = drawing_details;
 
-    // Save the updated product
     const updatedProduct = await drawing.save();
-
-    // Respond with the updated product data
     return res.status(200).json({
       status: "Success",
       data: updatedProduct,

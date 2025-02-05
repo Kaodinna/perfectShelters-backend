@@ -10,7 +10,7 @@ import {
 
 const router: Router = express.Router();
 router.post("/add-drawing", AddDrawing);
-router.post("/edit-drawing", editDrawing);
+router.post("/edit-drawing/:id", editDrawing);
 router.delete("/delete-drawing/:id", deleteDrawing);
 router.get("/get-drawings", getAllDrawings);
 router.get("/get-drawings/:id", getDrawingById);

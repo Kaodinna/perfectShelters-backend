@@ -186,26 +186,17 @@ const deleteDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.deleteDrawing = deleteDrawing;
 const editDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const productId = req.params.productId;
-        const { type, category, description, price, refNo, drawing_details } = req.body;
-        // Find the product by ID
+        const productId = req.params.id;
+        const { description, price } = req.body;
         const drawing = yield drawingModel_1.default.findById(productId).exec();
-        // Check if the product exists
         if (!drawing) {
             return res.status(404).json({
                 message: "Product not found",
             });
         }
-        // Update the product fields
-        drawing.type = type;
-        drawing.category = category;
         drawing.description = description;
         drawing.price = price;
-        drawing.refNo = refNo;
-        drawing.drawing_details = drawing_details;
-        // Save the updated product
         const updatedProduct = yield drawing.save();
-        // Respond with the updated product data
         return res.status(200).json({
             status: "Success",
             data: updatedProduct,
