@@ -58,16 +58,30 @@ const AddDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.AddDrawing = AddDrawing;
 const getAllDrawings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Use the `Drawing` model to find all drawings
-        const drawings = yield drawingModel_1.default.find().populate("comments");
-        if (drawings) {
-            return res.status(200).json({
-                status: "Success",
-                data: drawings,
-            });
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(100, parseInt(req.query.limit) || 20);
+        const search = req.query.search || "";
+        const skip = (page - 1) * limit;
+        const query = {};
+        if (search) {
+            query.$or = [
+                { description: { $regex: search, $options: "i" } },
+                { refNo: { $regex: search, $options: "i" } },
+            ];
         }
-        return res.status(404).json({
-            message: "No drawings found",
+        const [drawings, total] = yield Promise.all([
+            drawingModel_1.default.find(query).skip(skip).limit(limit),
+            drawingModel_1.default.countDocuments(query),
+        ]);
+        return res.status(200).json({
+            status: "Success",
+            data: drawings,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
         });
     }
     catch (error) {
@@ -187,15 +201,27 @@ exports.deleteDrawing = deleteDrawing;
 const editDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const productId = req.params.id;
-        const { description, price } = req.body;
+        const { description, price, type, category, refNo, frontElevation, rightElevation, leftElevation, } = req.body;
         const drawing = yield drawingModel_1.default.findById(productId).exec();
         if (!drawing) {
-            return res.status(404).json({
-                message: "Product not found",
-            });
+            return res.status(404).json({ message: "Product not found" });
         }
-        drawing.description = description;
-        drawing.price = price;
+        if (description !== undefined)
+            drawing.description = description;
+        if (price !== undefined)
+            drawing.price = price;
+        if (type !== undefined)
+            drawing.type = type;
+        if (category !== undefined)
+            drawing.category = category;
+        if (refNo !== undefined)
+            drawing.refNo = refNo;
+        if (frontElevation !== undefined)
+            drawing.frontElevation = frontElevation;
+        if (rightElevation !== undefined)
+            drawing.rightElevation = rightElevation;
+        if (leftElevation !== undefined)
+            drawing.leftElevation = leftElevation;
         const updatedProduct = yield drawing.save();
         return res.status(200).json({
             status: "Success",
@@ -204,9 +230,7 @@ const editDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     catch (error) {
         console.error(error);
-        return res.status(500).json({
-            message: "Internal Server Error",
-        });
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 });
 exports.editDrawing = editDrawing;

@@ -57,18 +57,33 @@ export const AddDrawing = async (req: Request, res: Response) => {
 
 export const getAllDrawings = async (req: Request, res: Response) => {
   try {
-    // Use the `Drawing` model to find all drawings
-    const drawings = await Drawing.find().populate("comments");
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(100, parseInt(req.query.limit as string) || 20);
+    const search = (req.query.search as string) || "";
+    const skip = (page - 1) * limit;
 
-    if (drawings) {
-      return res.status(200).json({
-        status: "Success",
-        data: drawings,
-      });
+    const query: Record<string, any> = {};
+    if (search) {
+      query.$or = [
+        { description: { $regex: search, $options: "i" } },
+        { refNo: { $regex: search, $options: "i" } },
+      ];
     }
 
-    return res.status(404).json({
-      message: "No drawings found",
+    const [drawings, total] = await Promise.all([
+      Drawing.find(query).skip(skip).limit(limit),
+      Drawing.countDocuments(query),
+    ]);
+
+    return res.status(200).json({
+      status: "Success",
+      data: drawings,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     console.error(error);
@@ -197,17 +212,31 @@ export const deleteDrawing = async (req: Request, res: Response) => {
 export const editDrawing = async (req: Request, res: Response) => {
   try {
     const productId = req.params.id;
-    const { description, price } = req.body;
+    const {
+      description,
+      price,
+      type,
+      category,
+      refNo,
+      frontElevation,
+      rightElevation,
+      leftElevation,
+    } = req.body;
 
     const drawing = await Drawing.findById(productId).exec();
 
     if (!drawing) {
-      return res.status(404).json({
-        message: "Product not found",
-      });
+      return res.status(404).json({ message: "Product not found" });
     }
-    drawing.description = description;
-    drawing.price = price;
+
+    if (description !== undefined) drawing.description = description;
+    if (price !== undefined) drawing.price = price;
+    if (type !== undefined) drawing.type = type;
+    if (category !== undefined) drawing.category = category;
+    if (refNo !== undefined) drawing.refNo = refNo;
+    if (frontElevation !== undefined) drawing.frontElevation = frontElevation;
+    if (rightElevation !== undefined) drawing.rightElevation = rightElevation;
+    if (leftElevation !== undefined) drawing.leftElevation = leftElevation;
 
     const updatedProduct = await drawing.save();
     return res.status(200).json({
@@ -216,8 +245,6 @@ export const editDrawing = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };

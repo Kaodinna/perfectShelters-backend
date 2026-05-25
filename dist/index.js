@@ -29,8 +29,7 @@ app.use(function (req, res, next) {
     next();
 });
 app.use((0, cors_1.default)());
-const url = `mongodb+srv://perfectshelterng:chibuike123@cluster0.8avq6xm.mongodb.net/`;
-// const url = `mongodb+srv://kaodi-investment:houseparty22@cluster0.nzmmrt4.mongodb.net/`
+const url = process.env.MONGO_URI;
 mongoose_1.default
     .connect(url, {
     retryWrites: true,

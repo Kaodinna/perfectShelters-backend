@@ -30,8 +30,7 @@ app.use(function (req, res, next) {
 });
 app.use(cors());
 
-const url = `mongodb+srv://perfectshelterng:chibuike123@cluster0.8avq6xm.mongodb.net/`;
-// const url = `mongodb+srv://kaodi-investment:houseparty22@cluster0.nzmmrt4.mongodb.net/`
+const url = process.env.MONGO_URI!;
 
 mongoose
   .connect(url, {
