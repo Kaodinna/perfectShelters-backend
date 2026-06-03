@@ -49,15 +49,19 @@ export const Register = async (req: Request, res: Response) => {
       });
 
       const payload = {
-        email: newUser.email, // Include other necessary fields
+        email: newUser.email,
       };
-      const secret = `${JWT_KEY}verifyThisaccount`; // Ensure that you have JWT_KEY set in your environment variables
-      const signature = jwt.sign(payload, secret);
+      const secret = `${JWT_KEY}verifyThisaccount`;
+      const signature = jwt.sign(payload, secret, { expiresIn: "1d" });
+
+      const verifyUrl = `${process.env.BACKEND_URL || "https://perfect-shelters-backend.onrender.com"}/users/verify-account/${signature}`;
+      const html = emailHtml(verifyUrl);
+      await mailSent(fromAdminMail, newUser.email, userSubject, html);
 
       if (newUser) {
         return res.status(200).json({
           status: 'Success',
-          data: newUser, // Return the newly created user object
+          message: 'Registration successful. Please check your email to verify your account.',
         });
       }
     } 
@@ -88,7 +92,7 @@ export const verifyAccount = async (req: Request, res: Response) => {
       const updatedUser = await user.save();
 
       if (updatedUser) {
-        const url = `https://investement.vercel.app/user-login`;
+        const url = `${process.env.FRONTEND_URL || "https://perfect-shelters.vercel.app"}/user-login`;
         res.redirect(url)
         // Return a success message along with the URL
        
@@ -140,7 +144,7 @@ export const Login = async (req: Request, res: Response) => {
           _id: user._id, // Include other necessary fields
         };
         const secret = `${JWT_KEY}verifyThisaccount`;
-        const token = jwt.sign(payload, secret);
+        const token = jwt.sign(payload, secret, { expiresIn: "7d" });
 
         // Return user details and token
         return res.status(200).json({

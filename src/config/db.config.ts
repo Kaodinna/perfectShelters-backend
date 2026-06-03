@@ -6,3 +6,7 @@ export const GMAIL_PASS = process.env.GMAIL_PASS;
 export const JWT_KEY = process.env.JWT_KEY;
 export const fromAdminMail = process.env.fromAdminMail as string;
 export const userSubject = process.env.userSubject as string;
+export const FRONTEND_URL = process.env.FRONTEND_URL as string;
+export const BACKEND_URL = process.env.BACKEND_URL as string;
+export const ADMIN_EMAIL = process.env.ADMIN_EMAIL as string;
+export const RESEND_API_KEY = process.env.RESEND_API_KEY as string;

@@ -159,9 +159,12 @@ export const getDrawingsByParams = async (req: Request, res: Response) => {
 
 export const getDrawingsByType = async (req: Request, res: Response) => {
   try {
-    const type = "bungalow"; // Define the type you want to filter by
+    const type = req.params.type || req.query.type as string;
 
-    // Use Mongoose to find all drawings with the specified type
+    if (!type) {
+      return res.status(400).json({ message: "Type parameter is required" });
+    }
+
     const drawings = await Drawing.find({ type });
 
     if (drawings.length > 0) {

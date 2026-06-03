@@ -22,7 +22,7 @@ export const AddPicture = async (req: Request, res: Response) => {
     const drawing = await Construction.findById(drawingId);
     if (!drawing) {
       return res.status(400).json({
-        stamessagetus: "Construction not found",
+        message: "Construction not found",
       });
     }
     if (drawing) {

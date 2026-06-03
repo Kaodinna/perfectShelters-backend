@@ -17,7 +17,7 @@ export interface UserAttribute {
   export const userSchema = new mongoose.Schema<UserAttribute>({
     firstName: {
       type: String,
-      rquired: true,
+      required: true,
     },
     lastName: {
       type: String,
