@@ -1,5 +1,5 @@
 import Joi from "joi";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { AuthPayload } from "../interface/Auth.dto";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { APP_SECRET } from "../config/db.config";
