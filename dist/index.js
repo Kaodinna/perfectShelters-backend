@@ -4,6 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const http_1 = require("http");
+const socket_io_1 = require("socket.io");
 const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const userRoute_1 = __importDefault(require("./src/routes/userRoute"));
@@ -13,42 +15,43 @@ const cors_1 = __importDefault(require("cors"));
 const bucket_route_1 = __importDefault(require("./src/routes/bucket.route"));
 const construction_route_1 = __importDefault(require("./src/routes/construction.route"));
 const picture_route_1 = __importDefault(require("./src/routes/picture.route"));
+const chat_route_1 = __importDefault(require("./src/routes/chat.route"));
+const chat_socket_1 = require("./src/socket/chat.socket");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const port = process.env.PORT;
-app.use(function (req, res, next) {
-    var _a;
-    // res.header("Access-Control-Allow-Origin", "*");
-    const allowedOrigins = ["*"];
-    const origin = (_a = req.headers.origin) !== null && _a !== void 0 ? _a : "http://localhost";
-    if (allowedOrigins.includes(origin))
-        res.setHeader("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, UPDATE");
-    next();
+const httpServer = (0, http_1.createServer)(app);
+const port = process.env.PORT || 8080;
+const allowedOrigins = [
+    process.env.FRONTEND_URL || "https://perfect-shelters.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001",
+];
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+};
+app.use((0, cors_1.default)(corsOptions));
+const io = new socket_io_1.Server(httpServer, {
+    cors: {
+        origin: allowedOrigins,
+        credentials: true,
+    },
 });
-app.use((0, cors_1.default)());
-const url = process.env.MONGO_URI;
-mongoose_1.default
-    .connect(url, {
-    retryWrites: true,
-    w: "majority",
-})
-    .then(() => {
-    console.log("connected to Mongo");
-})
-    .catch((error) => {
-    console.error("Error connecting to MongoDB");
-    console.log(error);
+io.on("connection", (socket) => {
+    (0, chat_socket_1.registerChatHandlers)(io, socket);
 });
-app.use(express_1.default.json()); // Parse JSON data
+app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.get("/", (req, res) => {
-    res.send("Express + TypeScript Server");
-});
-app.listen(port, () => {
-    console.log(`[server]: Server is running at ${port}`);
+    res.send("Perfect Shelters API");
 });
 app.use("/users", userRoute_1.default);
 app.use("/bucket", bucket_route_1.default);
@@ -56,3 +59,20 @@ app.use("/drawing", drawingRoute_1.default);
 app.use("/comment", commentRoute_1.default);
 app.use("/construct", construction_route_1.default);
 app.use("/picture", picture_route_1.default);
+app.use("/chat", chat_route_1.default);
+const url = process.env.MONGO_URI;
+mongoose_1.default
+    .connect(url, {
+    retryWrites: true,
+    w: "majority",
+})
+    .then(() => {
+    console.log("Connected to MongoDB");
+    httpServer.listen(port, () => {
+        console.log(`[server]: Server is running on port ${port}`);
+    });
+})
+    .catch((error) => {
+    console.error("Fatal: could not connect to MongoDB", error);
+    process.exit(1);
+});

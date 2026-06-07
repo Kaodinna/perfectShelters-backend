@@ -15,7 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Login = exports.verifyAccount = exports.Register = void 0;
 const utility_1 = require("../utils/utility");
 const userModel_1 = __importDefault(require("../model/userModel"));
+const notification_1 = require("../utils/notification");
 const db_config_1 = require("../config/db.config");
+const db_config_2 = require("../config/db.config");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 /**========================REGISTER USER==========================**/
 const Register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,14 +43,17 @@ const Register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 phone,
             });
             const payload = {
-                email: newUser.email, // Include other necessary fields
+                email: newUser.email,
             };
-            const secret = `${db_config_1.JWT_KEY}verifyThisaccount`; // Ensure that you have JWT_KEY set in your environment variables
-            const signature = jsonwebtoken_1.default.sign(payload, secret);
+            const secret = `${db_config_2.JWT_KEY}verifyThisaccount`;
+            const signature = jsonwebtoken_1.default.sign(payload, secret, { expiresIn: "1d" });
+            const verifyUrl = `${process.env.BACKEND_URL || "https://perfect-shelters-backend.onrender.com"}/users/verify-account/${signature}`;
+            const html = (0, notification_1.emailHtml)(verifyUrl);
+            yield (0, notification_1.mailSent)(db_config_1.fromAdminMail, newUser.email, db_config_1.userSubject, html);
             if (newUser) {
                 return res.status(200).json({
                     status: 'Success',
-                    data: newUser, // Return the newly created user object
+                    message: 'Registration successful. Please check your email to verify your account.',
                 });
             }
         }
@@ -67,7 +72,7 @@ exports.Register = Register;
 /**========================Verify USER==========================**/
 const verifyAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { token } = req.params;
-    const secretKey = `${db_config_1.JWT_KEY}verifyThisaccount`;
+    const secretKey = `${db_config_2.JWT_KEY}verifyThisaccount`;
     try {
         const decoded = jsonwebtoken_1.default.verify(token, secretKey);
         const user = yield userModel_1.default.findOne({ email: decoded.email });
@@ -75,7 +80,7 @@ const verifyAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             user.accountStatus = true;
             const updatedUser = yield user.save();
             if (updatedUser) {
-                const url = `https://investement.vercel.app/user-login`;
+                const url = `${process.env.FRONTEND_URL || "https://perfect-shelters.vercel.app"}/user-login`;
                 res.redirect(url);
                 // Return a success message along with the URL
             }
@@ -116,8 +121,8 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     email: user.email,
                     _id: user._id, // Include other necessary fields
                 };
-                const secret = `${db_config_1.JWT_KEY}verifyThisaccount`;
-                const token = jsonwebtoken_1.default.sign(payload, secret);
+                const secret = `${db_config_2.JWT_KEY}verifyThisaccount`;
+                const token = jsonwebtoken_1.default.sign(payload, secret, { expiresIn: "7d" });
                 // Return user details and token
                 return res.status(200).json({
                     message: "You have successfully logged in",

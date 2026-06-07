@@ -33,7 +33,7 @@ const AddPicture = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const drawing = yield construction_model_1.default.findById(drawingId);
         if (!drawing) {
             return res.status(400).json({
-                stamessagetus: "Construction not found",
+                message: "Construction not found",
             });
         }
         if (drawing) {

@@ -14,12 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadToCloudinary = void 0;
 const cloudinary_1 = __importDefault(require("cloudinary"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+cloudinary_1.default.v2.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 const uploadToCloudinary = (path) => __awaiter(void 0, void 0, void 0, function* () {
-    cloudinary_1.default.v2.config({
-        cloud_name: "dgugfsbon",
-        api_key: "698253428546552",
-        api_secret: "HFk6gq_M1Aw8_JPvbYNlycDp7IY",
-    });
     return yield cloudinary_1.default.v2.uploader.upload(path);
 });
 exports.uploadToCloudinary = uploadToCloudinary;

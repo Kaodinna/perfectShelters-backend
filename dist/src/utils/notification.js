@@ -8,85 +8,93 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.emailHtml = exports.mailSent = void 0;
-const nodemailer_1 = __importDefault(require("nodemailer"));
+exports.emailHtml = exports.chatNotificationHtml = exports.mailSent = exports.sendEmail = void 0;
+const resend_1 = require("resend");
 const db_config_1 = require("../config/db.config");
-const transport = nodemailer_1.default.createTransport({
-    service: 'gmail',
-    auth: {
-        user: db_config_1.GMAIL_USER,
-        pass: db_config_1.GMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
-});
-const mailSent = (from, to, subject, html) => __awaiter(void 0, void 0, void 0, function* () {
+const resend = new resend_1.Resend(db_config_1.RESEND_API_KEY);
+const sendEmail = (to, subject, html) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const response = yield transport.sendMail({
-            from: db_config_1.fromAdminMail, to, subject: db_config_1.userSubject, html
+        yield resend.emails.send({
+            from: db_config_1.fromAdminMail || "Perfect Shelters <noreply@perfectshelters.ng>",
+            to,
+            subject,
+            html,
         });
-        return response;
     }
     catch (err) {
-        console.log(err);
+        console.error("Email send failed:", err);
     }
 });
+exports.sendEmail = sendEmail;
+// Legacy wrapper kept for account verification flow
+const mailSent = (_from, to, subject, html) => __awaiter(void 0, void 0, void 0, function* () {
+    return (0, exports.sendEmail)(to, subject, html);
+});
 exports.mailSent = mailSent;
-// export const emailHtml = (signature:string) => {
-//     let response = `
-//     <div style="max-width:700px;
-//     margin: auto; border:10px; solid #add;
-//     padding:50px 20px; font-size:110%;
-//     "> 
-//     <h2 style="text-align: center; text-transform: uppercase; 
-//     color: teal;">Welcome to Food App
-//     </h2>
-//     <p>Congratulations! You're almost set to start using Food App. your otp is ${signature}</p>
-//     </div>
-//     `
-//     return response
-// }
-const emailHtml = (signature) => {
-    let response = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width">
-        <style>
-          /* Add your CSS styles here */
-          body {
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-            line-height: 1.5;
-          }
-          .email-container {
-            max-width: 700px;
-            margin: auto;
-            border: 10px solid #add;
-            padding: 50px 20px;
-            font-size: 110%;
-          }
-          .email-heading {
-            text-align: center;
-            text-transform: uppercase;
-            color: teal;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="email-container">
-          <h2 class="email-heading">Welcome to Food App</h2>
-          <p>Congratulations! You're almost set to start using Food App. Your OTP is http://localhost:8000/api/auth/verify-account/${signature}</p>
+const chatNotificationHtml = (visitorName, visitorPhone, adminChatUrl) => `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <style>
+      body { font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; background: #f5f5f5; margin: 0; padding: 0; }
+      .wrapper { max-width: 560px; margin: 32px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+      .header { background: #1877F2; padding: 24px 32px; }
+      .header h1 { color: #ffffff; margin: 0; font-size: 18px; }
+      .body { padding: 28px 32px; }
+      .badge { display: inline-block; background: #e8f0fe; color: #1877F2; font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 20px; margin-bottom: 16px; }
+      .field { margin-bottom: 12px; }
+      .field span { font-size: 12px; color: #888; display: block; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+      .field p { margin: 0; font-weight: 600; color: #111; }
+      .btn { display: inline-block; margin-top: 24px; padding: 13px 28px; background: #1877F2; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; }
+      .footer { padding: 16px 32px; background: #f9f9f9; border-top: 1px solid #eee; font-size: 12px; color: #aaa; }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <h1>Perfect Shelters — New Chat</h1>
+      </div>
+      <div class="body">
+        <div class="badge">🟢 New conversation started</div>
+        <div class="field">
+          <span>Visitor name</span>
+          <p>${visitorName}</p>
         </div>
-      </body>
-      </html>
-      `;
-    return response;
-};
+        ${visitorPhone ? `<div class="field"><span>Phone</span><p>${visitorPhone}</p></div>` : ""}
+        <a href="${adminChatUrl}" class="btn">Open Chat Dashboard →</a>
+      </div>
+      <div class="footer">Perfect Shelters Admin &nbsp;·&nbsp; This is an automated notification</div>
+    </div>
+  </body>
+  </html>
+`;
+exports.chatNotificationHtml = chatNotificationHtml;
+const emailHtml = (verifyUrl) => `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <style>
+      body { font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; }
+      .email-container { max-width: 700px; margin: auto; padding: 50px 20px; border: 1px solid #e0e0e0; }
+      .email-heading { text-align: center; text-transform: uppercase; color: #1877F2; }
+      .btn { display: inline-block; padding: 12px 24px; background-color: #1877F2; color: #ffffff; text-decoration: none; border-radius: 4px; margin-top: 20px; }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <h2 class="email-heading">Welcome to Perfect Shelters</h2>
+      <p>Thank you for registering! Please click the button below to verify your account.</p>
+      <p><a href="${verifyUrl}" class="btn">Verify My Account</a></p>
+      <p>Or copy and paste this link into your browser:</p>
+      <p>${verifyUrl}</p>
+      <p>This link expires in 24 hours.</p>
+    </div>
+  </body>
+  </html>
+`;
 exports.emailHtml = emailHtml;

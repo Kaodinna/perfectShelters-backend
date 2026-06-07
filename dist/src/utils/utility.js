@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validatePassword = exports.loginSchema = exports.Generatesignature = exports.GeneratePassword = exports.GenerateSalt = exports.option = exports.pictureSchema = exports.ConstructionSchema = exports.drawingSchema = exports.commentSchema = exports.registerSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const db_config_1 = require("../config/db.config");
 exports.registerSchema = joi_1.default.object().keys({
@@ -64,11 +64,11 @@ exports.option = {
     },
 };
 const GenerateSalt = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield bcrypt_1.default.genSalt();
+    return yield bcryptjs_1.default.genSalt();
 });
 exports.GenerateSalt = GenerateSalt;
 const GeneratePassword = (password, salt) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield bcrypt_1.default.hash(password, salt);
+    return yield bcryptjs_1.default.hash(password, salt);
 });
 exports.GeneratePassword = GeneratePassword;
 const Generatesignature = (payload) => __awaiter(void 0, void 0, void 0, function* () {

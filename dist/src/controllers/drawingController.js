@@ -149,8 +149,10 @@ const getDrawingsByParams = (req, res) => __awaiter(void 0, void 0, void 0, func
 exports.getDrawingsByParams = getDrawingsByParams;
 const getDrawingsByType = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const type = "bungalow"; // Define the type you want to filter by
-        // Use Mongoose to find all drawings with the specified type
+        const type = req.params.type || req.query.type;
+        if (!type) {
+            return res.status(400).json({ message: "Type parameter is required" });
+        }
         const drawings = yield drawingModel_1.default.find({ type });
         if (drawings.length > 0) {
             return res.status(200).json({
