@@ -55,6 +55,19 @@ async function recordPurchase(paystackTx: any): Promise<boolean> {
   return true;
 }
 
+// Returns all purchases for the admin dashboard
+export const getAllPurchases = async (req: Request, res: Response) => {
+  try {
+    const purchases = await Purchase.find()
+      .sort({ createdAt: -1 })
+      .lean();
+    return res.status(200).json({ success: true, data: purchases });
+  } catch (err) {
+    console.error("getAllPurchases error:", err);
+    return res.status(500).json({ success: false, message: "Failed to fetch purchases" });
+  }
+};
+
 // Called by the frontend immediately after Paystack popup callback
 export const verifyPayment = async (req: Request, res: Response) => {
   const { reference } = req.body as { reference?: string };
