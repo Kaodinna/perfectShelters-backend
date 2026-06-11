@@ -4,10 +4,12 @@ import {
   getAllConstructions,
   deleteConstruct,
   getConstructById,
+  updateConstruction,
 } from "../controllers/construction.controller";
 
 const router: Router = express.Router();
 router.post("/add-construction", AddConstruction);
+router.put("/update-construction/:id", updateConstruction);
 router.get("/get-all-construction", getAllConstructions);
 router.delete("/delete-construction/:id", deleteConstruct);
 router.get("/get-construction/:id", getConstructById);

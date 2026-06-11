@@ -40,6 +40,12 @@ export const drawingSchema = Joi.object().keys({
 export const ConstructionSchema = Joi.object().keys({
   coverPhoto: Joi.string().required(),
   title: Joi.string().required(),
+  description: Joi.string().allow("").optional(),
+  location: Joi.string().allow("").optional(),
+  status: Joi.string().valid("Ongoing", "Completed").optional(),
+  clientName: Joi.string().allow("").optional(),
+  year: Joi.string().allow("").optional(),
+  videos: Joi.array().items(Joi.string()).optional(),
 });
 
 export const pictureSchema = Joi.object().keys({
