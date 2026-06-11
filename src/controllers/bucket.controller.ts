@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Bucket } from "../model/bucket.model";
-import { uploadToCloudinary } from "../helpers/cloud";
+import { uploadToCloudinary, uploadVideoToCloudinary } from "../helpers/cloud";
 import { Response } from "../interface/ExpressTypes";
 import { sendResponse } from "../helpers/response";
 
@@ -43,6 +43,23 @@ export class BucketController {
     }
 
     return sendResponse(res, 200, true, "Files added to Bucket", buckets);
+  }
+
+  async addVideoToBucket(res: Response, files: any) {
+    if (!files) return sendResponse(res, 500, false, "No files uploaded!");
+    const buckets: any[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const { path, fieldname } = files[i];
+      try {
+        const upload = await uploadVideoToCloudinary(path);
+        const toBucket = await Bucket.create({ data: upload, url: upload.secure_url });
+        buckets.push({ bucket: toBucket, fieldname, id: toBucket._id.toString() });
+      } catch (error: any) {
+        console.error(error);
+        return sendResponse(res, 500, false, "Video upload to Cloudinary failed", buckets);
+      }
+    }
+    return sendResponse(res, 200, true, "Video uploaded", buckets);
   }
 
   async getBucket(res: Response, bucketId: string) {

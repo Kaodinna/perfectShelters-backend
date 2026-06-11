@@ -11,3 +11,10 @@ cloudinary.v2.config({
 export const uploadToCloudinary = async (path: string) => {
   return await cloudinary.v2.uploader.upload(path);
 };
+
+export const uploadVideoToCloudinary = async (path: string) => {
+  return await cloudinary.v2.uploader.upload(path, {
+    resource_type: "video",
+    folder: "perfect_shelters/videos",
+  });
+};

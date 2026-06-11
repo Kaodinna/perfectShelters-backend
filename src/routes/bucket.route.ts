@@ -12,8 +12,11 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.post("/upload", uploadMiddleware, (req: Request, res: Response) => {
-  const files = req.files;
-  Bucket.addToBucket(res, files);
+  Bucket.addToBucket(res, req.files);
+});
+
+router.post("/upload-video", uploadMiddleware, (req: Request, res: Response) => {
+  Bucket.addVideoToBucket(res, req.files);
 });
 
 router.get("/download/:bucketId", (req: Request, res: Response) => {
