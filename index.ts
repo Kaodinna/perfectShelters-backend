@@ -11,6 +11,8 @@ import bucketRouter from "./src/routes/bucket.route";
 import constructionRouter from "./src/routes/construction.route";
 import pictureRouter from "./src/routes/picture.route";
 import chatRouter from "./src/routes/chat.route";
+import paymentRouter from "./src/routes/payment.route";
+import { paystackWebhook } from "./src/controllers/payment.controller";
 import { registerChatHandlers } from "./src/socket/chat.socket";
 
 dotenv.config();
@@ -39,6 +41,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Webhook must receive the raw body for HMAC verification — register before express.json()
+app.post("/payment/webhook", express.raw({ type: "application/json" }), paystackWebhook);
+
 const io = new Server(httpServer, {
   cors: {
     origin: allowedOrigins,
@@ -64,6 +69,7 @@ app.use("/comment", commentRouter);
 app.use("/construct", constructionRouter);
 app.use("/picture", pictureRouter);
 app.use("/chat", chatRouter);
+app.use("/payment", paymentRouter);
 
 const url = process.env.MONGO_URI!;
 

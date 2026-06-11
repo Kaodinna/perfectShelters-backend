@@ -10,3 +10,4 @@ export const FRONTEND_URL = process.env.FRONTEND_URL as string;
 export const BACKEND_URL = process.env.BACKEND_URL as string;
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL as string;
 export const RESEND_API_KEY = process.env.RESEND_API_KEY as string;
+export const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY as string;
