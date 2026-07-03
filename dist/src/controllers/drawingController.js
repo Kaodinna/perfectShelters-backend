@@ -175,7 +175,6 @@ const getDrawingsByType = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.getDrawingsByType = getDrawingsByType;
 const deleteDrawing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("boyyy", req.params);
     try {
         const drawingId = req.params.id;
         // Check if the product exists

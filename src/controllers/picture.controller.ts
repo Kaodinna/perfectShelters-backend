@@ -14,21 +14,20 @@ export const AddPicture = async (req: Request, res: Response) => {
       });
     }
 
-    const newPicture = await Pictures.create({
-      picture,
-      details,
-      drawingId,
-    });
     const drawing = await Construction.findById(drawingId);
     if (!drawing) {
       return res.status(400).json({
         message: "Construction not found",
       });
     }
-    if (drawing) {
-      drawing.pictures.push(newPicture._id);
-      await drawing.save();
-    }
+
+    const newPicture = await Pictures.create({
+      picture,
+      details,
+      drawingId,
+    });
+    drawing.pictures.push(newPicture._id);
+    await drawing.save();
 
     if (newPicture) {
       return res.status(200).json({

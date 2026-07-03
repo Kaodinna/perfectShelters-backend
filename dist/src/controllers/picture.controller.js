@@ -25,21 +25,19 @@ const AddPicture = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 error: validateResult.error.details[0].message,
             });
         }
-        const newPicture = yield pictures_model_1.default.create({
-            picture,
-            details,
-            drawingId,
-        });
         const drawing = yield construction_model_1.default.findById(drawingId);
         if (!drawing) {
             return res.status(400).json({
                 message: "Construction not found",
             });
         }
-        if (drawing) {
-            drawing.pictures.push(newPicture._id);
-            yield drawing.save();
-        }
+        const newPicture = yield pictures_model_1.default.create({
+            picture,
+            details,
+            drawingId,
+        });
+        drawing.pictures.push(newPicture._id);
+        yield drawing.save();
         if (newPicture) {
             return res.status(200).json({
                 status: "Success",

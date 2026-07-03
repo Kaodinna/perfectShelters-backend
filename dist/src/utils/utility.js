@@ -20,7 +20,7 @@ const db_config_1 = require("../config/db.config");
 exports.registerSchema = joi_1.default.object().keys({
     email: joi_1.default.string().email().required(),
     phone: joi_1.default.string().required(),
-    password: joi_1.default.string().pattern(new RegExp("[a-zA-Z0-9]{3,30}$")),
+    password: joi_1.default.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
     firstName: joi_1.default.string().required(),
     lastName: joi_1.default.string().required(),
     address: joi_1.default.string().required(),
@@ -49,6 +49,12 @@ exports.drawingSchema = joi_1.default.object().keys({
 exports.ConstructionSchema = joi_1.default.object().keys({
     coverPhoto: joi_1.default.string().required(),
     title: joi_1.default.string().required(),
+    description: joi_1.default.string().allow("").optional(),
+    location: joi_1.default.string().allow("").optional(),
+    status: joi_1.default.string().valid("Ongoing", "Completed").optional(),
+    clientName: joi_1.default.string().allow("").optional(),
+    year: joi_1.default.string().allow("").optional(),
+    videos: joi_1.default.array().items(joi_1.default.string()).optional(),
 });
 exports.pictureSchema = joi_1.default.object().keys({
     picture: joi_1.default.string().required(),
@@ -77,6 +83,10 @@ const Generatesignature = (payload) => __awaiter(void 0, void 0, void 0, functio
 exports.Generatesignature = Generatesignature;
 exports.loginSchema = joi_1.default.object().keys({
     email: joi_1.default.string().email().required(),
+    // NOTE: intentionally left without a leading `^` anchor (unlike registerSchema) —
+    // tightening this could reject the password of an already-registered account
+    // (e.g. an admin whose password has a special character or is 30+ chars),
+    // locking them out at login. Revisit once existing account passwords are known-safe.
     password: joi_1.default.string().pattern(new RegExp("[a-zA-Z0-9]{3,30}$")),
 });
 const validatePassword = (enteredPassword, savedPassword, salt) => __awaiter(void 0, void 0, void 0, function* () {

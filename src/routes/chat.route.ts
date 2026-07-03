@@ -1,10 +1,11 @@
 import express from "express";
 import Chat from "../model/chat.model";
+import { requireAuth } from "../middleware/auth.middleware";
 
 const router = express.Router();
 
 // Get all chat sessions (admin)
-router.get("/sessions", async (req, res) => {
+router.get("/sessions", requireAuth, async (req, res) => {
   try {
     const sessions = await Chat.find()
       .sort({ updatedAt: -1 })
@@ -16,7 +17,7 @@ router.get("/sessions", async (req, res) => {
 });
 
 // Get a single session with full messages
-router.get("/sessions/:sessionId", async (req, res) => {
+router.get("/sessions/:sessionId", requireAuth, async (req, res) => {
   try {
     const chat = await Chat.findOne({ sessionId: req.params.sessionId });
     if (!chat) return res.status(404).json({ message: "Session not found" });

@@ -14,9 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const chat_model_1 = __importDefault(require("../model/chat.model"));
+const auth_middleware_1 = require("../middleware/auth.middleware");
 const router = express_1.default.Router();
 // Get all chat sessions (admin)
-router.get("/sessions", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/sessions", auth_middleware_1.requireAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const sessions = yield chat_model_1.default.find()
             .sort({ updatedAt: -1 })
@@ -28,7 +29,7 @@ router.get("/sessions", (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 }));
 // Get a single session with full messages
-router.get("/sessions/:sessionId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/sessions/:sessionId", auth_middleware_1.requireAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const chat = yield chat_model_1.default.findOne({ sessionId: req.params.sessionId });
         if (!chat)

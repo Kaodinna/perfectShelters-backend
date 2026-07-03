@@ -7,11 +7,12 @@ import {
   editDrawing,
   deleteDrawing,
 } from "../controllers/drawingController";
+import { requireAuth } from "../middleware/auth.middleware";
 
 const router: Router = express.Router();
-router.post("/add-drawing", AddDrawing);
-router.post("/edit-drawing/:id", editDrawing);
-router.delete("/delete-drawing/:id", deleteDrawing);
+router.post("/add-drawing", requireAuth, AddDrawing);
+router.post("/edit-drawing/:id", requireAuth, editDrawing);
+router.delete("/delete-drawing/:id", requireAuth, deleteDrawing);
 router.get("/get-drawings", getAllDrawings);
 router.get("/get-drawings/:id", getDrawingById);
 router.get("/search-drawings/:type?/:category?", getDrawingsByParams);

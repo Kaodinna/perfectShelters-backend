@@ -7,7 +7,7 @@ import { APP_SECRET } from "../config/db.config";
 export const registerSchema = Joi.object().keys({
   email: Joi.string().email().required(),
   phone: Joi.string().required(),
-  password: Joi.string().pattern(new RegExp("[a-zA-Z0-9]{3,30}$")),
+  password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   address: Joi.string().required(),
@@ -76,6 +76,10 @@ export const Generatesignature = async (payload: AuthPayload) => {
 
 export const loginSchema = Joi.object().keys({
   email: Joi.string().email().required(),
+  // NOTE: intentionally left without a leading `^` anchor (unlike registerSchema) —
+  // tightening this could reject the password of an already-registered account
+  // (e.g. an admin whose password has a special character or is 30+ chars),
+  // locking them out at login. Revisit once existing account passwords are known-safe.
   password: Joi.string().pattern(new RegExp("[a-zA-Z0-9]{3,30}$")),
 });
 

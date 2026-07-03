@@ -1,9 +1,23 @@
 import { Server, Socket } from "socket.io";
+import jwt from "jsonwebtoken";
 import Chat from "../model/chat.model";
 import { sendEmail, chatNotificationHtml } from "../utils/notification";
-import { ADMIN_EMAIL, FRONTEND_URL } from "../config/db.config";
+import { ADMIN_EMAIL, FRONTEND_URL, JWT_KEY } from "../config/db.config";
+
+function isValidAdminToken(token: unknown): boolean {
+  if (typeof token !== "string" || !token) return false;
+  try {
+    jwt.verify(token, `${JWT_KEY}verifyThisaccount`);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export function registerChatHandlers(io: Server, socket: Socket) {
+  // Set only after a valid admin JWT is presented via admin:join / admin:open_session / chat:close.
+  let isAdmin = false;
+
   // Visitor starts or resumes a chat session
   socket.on("chat:start", async ({ sessionId, visitorName, visitorEmail, visitorPhone }) => {
     try {
@@ -37,13 +51,20 @@ export function registerChatHandlers(io: Server, socket: Socket) {
 
   // Visitor or admin sends a message
   socket.on("chat:message", async ({ sessionId, text, sender }) => {
+    // A socket may only post into a session room it has actually joined
+    // (visitor via chat:start, admin via admin:open_session).
+    if (!socket.rooms.has(sessionId)) return;
+    // Never trust the client's claimed sender — only a socket that authenticated
+    // as admin (via admin:join/admin:open_session) may post as "admin".
+    const actualSender: "visitor" | "admin" = isAdmin && sender === "admin" ? "admin" : "visitor";
+
     try {
-      const msg = { sender, text, timestamp: new Date(), read: false };
+      const msg = { sender: actualSender, text, timestamp: new Date(), read: false };
       const chat = await Chat.findOneAndUpdate(
         { sessionId },
         {
           $push: { messages: msg },
-          $inc: { unreadCount: sender === "visitor" ? 1 : 0 },
+          $inc: { unreadCount: actualSender === "visitor" ? 1 : 0 },
         },
         { new: true }
       );
@@ -66,13 +87,23 @@ export function registerChatHandlers(io: Server, socket: Socket) {
     }
   });
 
-  // Admin joins the admin room to receive all session events
-  socket.on("admin:join", () => {
+  // Admin joins the admin room to receive all session events — requires a valid login JWT
+  socket.on("admin:join", ({ token }: { token?: string } = {}) => {
+    if (!isValidAdminToken(token)) {
+      socket.emit("chat:error", "Unauthorized");
+      return;
+    }
+    isAdmin = true;
     socket.join("admin");
   });
 
-  // Admin opens a specific session — mark messages as read
-  socket.on("admin:open_session", async ({ sessionId }) => {
+  // Admin opens a specific session — mark messages as read — requires a valid login JWT
+  socket.on("admin:open_session", async ({ sessionId, token }: { sessionId: string; token?: string }) => {
+    if (!isAdmin && !isValidAdminToken(token)) {
+      socket.emit("chat:error", "Unauthorized");
+      return;
+    }
+    isAdmin = true;
     socket.join(sessionId);
     await Chat.updateOne(
       { sessionId },
@@ -85,11 +116,17 @@ export function registerChatHandlers(io: Server, socket: Socket) {
 
   // Typing indicator
   socket.on("chat:typing", ({ sessionId, sender }) => {
-    socket.to(sessionId).emit("chat:typing", { sender });
+    const actualSender: "visitor" | "admin" = isAdmin && sender === "admin" ? "admin" : "visitor";
+    socket.to(sessionId).emit("chat:typing", { sender: actualSender });
   });
 
-  // Close a session
-  socket.on("chat:close", async ({ sessionId }) => {
+  // Close a session — requires a valid login JWT
+  socket.on("chat:close", async ({ sessionId, token }: { sessionId: string; token?: string }) => {
+    if (!isAdmin && !isValidAdminToken(token)) {
+      socket.emit("chat:error", "Unauthorized");
+      return;
+    }
+    isAdmin = true;
     await Chat.updateOne({ sessionId }, { status: "closed" });
     io.to(sessionId).emit("chat:closed");
     io.to("admin").emit("chat:session_update", { sessionId, status: "closed" });

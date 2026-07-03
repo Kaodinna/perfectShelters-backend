@@ -3,6 +3,7 @@ import mongoose, { Document } from "mongoose";
 export interface PicturesAttribute {
   picture: string;
   details: string;
+  drawingId: mongoose.Schema.Types.ObjectId;
 }
 
 export const pictureSchema = new mongoose.Schema<PicturesAttribute>(
@@ -13,6 +14,11 @@ export const pictureSchema = new mongoose.Schema<PicturesAttribute>(
     },
     details: {
       type: String,
+      required: true,
+    },
+    drawingId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "construction",
       required: true,
     },
   },

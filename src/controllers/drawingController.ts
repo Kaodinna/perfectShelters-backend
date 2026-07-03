@@ -186,7 +186,6 @@ export const getDrawingsByType = async (req: Request, res: Response) => {
 };
 
 export const deleteDrawing = async (req: Request, res: Response) => {
-  console.log("boyyy", req.params);
   try {
     const drawingId = req.params.id;
 

@@ -14,6 +14,11 @@ exports.pictureSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
+    drawingId: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "construction",
+        required: true,
+    },
 }, { timestamps: true });
 const Pictures = mongoose_1.default.model("Pictures", exports.pictureSchema);
 exports.default = Pictures;

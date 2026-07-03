@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadToCloudinary = void 0;
+exports.uploadVideoToCloudinary = exports.uploadToCloudinary = void 0;
 const cloudinary_1 = __importDefault(require("cloudinary"));
+const promises_1 = __importDefault(require("fs/promises"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 cloudinary_1.default.v2.config({
@@ -22,6 +23,23 @@ cloudinary_1.default.v2.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 const uploadToCloudinary = (path) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield cloudinary_1.default.v2.uploader.upload(path);
+    try {
+        return yield cloudinary_1.default.v2.uploader.upload(path);
+    }
+    finally {
+        promises_1.default.unlink(path).catch(() => { });
+    }
 });
 exports.uploadToCloudinary = uploadToCloudinary;
+const uploadVideoToCloudinary = (path) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        return yield cloudinary_1.default.v2.uploader.upload(path, {
+            resource_type: "video",
+            folder: "perfect_shelters/videos",
+        });
+    }
+    finally {
+        promises_1.default.unlink(path).catch(() => { });
+    }
+});
+exports.uploadVideoToCloudinary = uploadVideoToCloudinary;

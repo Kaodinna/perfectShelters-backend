@@ -1,7 +1,8 @@
 import express from "express";
 import { BucketController } from "../controllers/bucket.controller";
 import { Response, Request } from "../interface/ExpressTypes";
-import { uploadMiddleware } from "../middleware/upload";
+import { uploadMiddleware, uploadVideoMiddleware } from "../middleware/upload";
+import { requireAuth } from "../middleware/auth.middleware";
 
 const router = express.Router();
 
@@ -11,11 +12,11 @@ router.get("/", (req: Request, res: Response) => {
   res.send(" Bucket Storage Endpoint is live");
 });
 
-router.post("/upload", uploadMiddleware, (req: Request, res: Response) => {
+router.post("/upload", requireAuth, uploadMiddleware, (req: Request, res: Response) => {
   Bucket.addToBucket(res, req.files);
 });
 
-router.post("/upload-video", uploadMiddleware, (req: Request, res: Response) => {
+router.post("/upload-video", requireAuth, uploadVideoMiddleware, (req: Request, res: Response) => {
   Bucket.addVideoToBucket(res, req.files);
 });
 

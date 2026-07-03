@@ -6,11 +6,12 @@ import {
   getConstructById,
   updateConstruction,
 } from "../controllers/construction.controller";
+import { requireAuth } from "../middleware/auth.middleware";
 
 const router: Router = express.Router();
-router.post("/add-construction", AddConstruction);
-router.put("/update-construction/:id", updateConstruction);
+router.post("/add-construction", requireAuth, AddConstruction);
+router.put("/update-construction/:id", requireAuth, updateConstruction);
 router.get("/get-all-construction", getAllConstructions);
-router.delete("/delete-construction/:id", deleteConstruct);
+router.delete("/delete-construction/:id", requireAuth, deleteConstruct);
 router.get("/get-construction/:id", getConstructById);
 export default router;

@@ -80,7 +80,7 @@ const verifyAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             user.accountStatus = true;
             const updatedUser = yield user.save();
             if (updatedUser) {
-                const url = `${process.env.FRONTEND_URL || "https://perfect-shelters.vercel.app"}/user-login`;
+                const url = `${process.env.FRONTEND_URL || "https://perfect-shelters.vercel.app"}/login`;
                 res.redirect(url);
                 // Return a success message along with the URL
             }

@@ -1,4 +1,5 @@
 import cloudinary from "cloudinary";
+import fs from "fs/promises";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -9,12 +10,20 @@ cloudinary.v2.config({
 });
 
 export const uploadToCloudinary = async (path: string) => {
-  return await cloudinary.v2.uploader.upload(path);
+  try {
+    return await cloudinary.v2.uploader.upload(path);
+  } finally {
+    fs.unlink(path).catch(() => {});
+  }
 };
 
 export const uploadVideoToCloudinary = async (path: string) => {
-  return await cloudinary.v2.uploader.upload(path, {
-    resource_type: "video",
-    folder: "perfect_shelters/videos",
-  });
+  try {
+    return await cloudinary.v2.uploader.upload(path, {
+      resource_type: "video",
+      folder: "perfect_shelters/videos",
+    });
+  } finally {
+    fs.unlink(path).catch(() => {});
+  }
 };

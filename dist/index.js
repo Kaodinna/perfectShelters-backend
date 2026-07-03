@@ -16,6 +16,8 @@ const bucket_route_1 = __importDefault(require("./src/routes/bucket.route"));
 const construction_route_1 = __importDefault(require("./src/routes/construction.route"));
 const picture_route_1 = __importDefault(require("./src/routes/picture.route"));
 const chat_route_1 = __importDefault(require("./src/routes/chat.route"));
+const payment_route_1 = __importDefault(require("./src/routes/payment.route"));
+const payment_controller_1 = require("./src/controllers/payment.controller");
 const chat_socket_1 = require("./src/socket/chat.socket");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -39,6 +41,8 @@ const corsOptions = {
     methods: ["GET", "POST", "PUT", "DELETE"],
 };
 app.use((0, cors_1.default)(corsOptions));
+// Webhook must receive the raw body for HMAC verification — register before express.json()
+app.post("/payment/webhook", express_1.default.raw({ type: "application/json" }), payment_controller_1.paystackWebhook);
 const io = new socket_io_1.Server(httpServer, {
     cors: {
         origin: allowedOrigins,
@@ -60,6 +64,7 @@ app.use("/comment", commentRoute_1.default);
 app.use("/construct", construction_route_1.default);
 app.use("/picture", picture_route_1.default);
 app.use("/chat", chat_route_1.default);
+app.use("/payment", payment_route_1.default);
 const url = process.env.MONGO_URI;
 mongoose_1.default
     .connect(url, {

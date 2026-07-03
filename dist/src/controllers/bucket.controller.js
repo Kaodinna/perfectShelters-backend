@@ -51,6 +51,26 @@ class BucketController {
             return (0, response_1.sendResponse)(res, 200, true, "Files added to Bucket", buckets);
         });
     }
+    addVideoToBucket(res, files) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!files)
+                return (0, response_1.sendResponse)(res, 500, false, "No files uploaded!");
+            const buckets = [];
+            for (let i = 0; i < files.length; i++) {
+                const { path, fieldname } = files[i];
+                try {
+                    const upload = yield (0, cloud_1.uploadVideoToCloudinary)(path);
+                    const toBucket = yield bucket_model_1.Bucket.create({ data: upload, url: upload.secure_url });
+                    buckets.push({ bucket: toBucket, fieldname, id: toBucket._id.toString() });
+                }
+                catch (error) {
+                    console.error(error);
+                    return (0, response_1.sendResponse)(res, 500, false, "Video upload to Cloudinary failed", buckets);
+                }
+            }
+            return (0, response_1.sendResponse)(res, 200, true, "Video uploaded", buckets);
+        });
+    }
     getBucket(res, bucketId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
