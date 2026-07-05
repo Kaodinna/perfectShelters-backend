@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { RESEND_API_KEY, fromAdminMail, userSubject } from "../config/db.config";
+import { RESEND_API_KEY, fromAdminMail } from "../config/db.config";
 
 const resend = new Resend(RESEND_API_KEY);
 
@@ -14,16 +14,6 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
   } catch (err) {
     console.error("Email send failed:", err);
   }
-};
-
-// Legacy wrapper kept for account verification flow
-export const mailSent = async (
-  _from: string,
-  to: string,
-  subject: string,
-  html: string
-) => {
-  return sendEmail(to, subject, html);
 };
 
 export const chatNotificationHtml = (
@@ -155,32 +145,6 @@ export const purchaseAdminNotificationHtml = (
         <p style="margin-top:20px;color:#555">Please deliver the plan to <strong>${customerEmail}</strong> within 24 hours.</p>
       </div>
       <div class="footer">Perfect Shelters Admin &nbsp;·&nbsp; Automated notification</div>
-    </div>
-  </body>
-  </html>
-`;
-
-export const emailHtml = (verifyUrl: string) => `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <style>
-      body { font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; }
-      .email-container { max-width: 700px; margin: auto; padding: 50px 20px; border: 1px solid #e0e0e0; }
-      .email-heading { text-align: center; text-transform: uppercase; color: #1877F2; }
-      .btn { display: inline-block; padding: 12px 24px; background-color: #1877F2; color: #ffffff; text-decoration: none; border-radius: 4px; margin-top: 20px; }
-    </style>
-  </head>
-  <body>
-    <div class="email-container">
-      <h2 class="email-heading">Welcome to Perfect Shelters</h2>
-      <p>Thank you for registering! Please click the button below to verify your account.</p>
-      <p><a href="${verifyUrl}" class="btn">Verify My Account</a></p>
-      <p>Or copy and paste this link into your browser:</p>
-      <p>${verifyUrl}</p>
-      <p>This link expires in 24 hours.</p>
     </div>
   </body>
   </html>

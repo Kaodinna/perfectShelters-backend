@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.emailHtml = exports.purchaseAdminNotificationHtml = exports.purchaseConfirmationHtml = exports.chatNotificationHtml = exports.mailSent = exports.sendEmail = void 0;
+exports.purchaseAdminNotificationHtml = exports.purchaseConfirmationHtml = exports.chatNotificationHtml = exports.sendEmail = void 0;
 const resend_1 = require("resend");
 const db_config_1 = require("../config/db.config");
 const resend = new resend_1.Resend(db_config_1.RESEND_API_KEY);
@@ -27,11 +27,6 @@ const sendEmail = (to, subject, html) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.sendEmail = sendEmail;
-// Legacy wrapper kept for account verification flow
-const mailSent = (_from, to, subject, html) => __awaiter(void 0, void 0, void 0, function* () {
-    return (0, exports.sendEmail)(to, subject, html);
-});
-exports.mailSent = mailSent;
 const chatNotificationHtml = (visitorName, visitorPhone, adminChatUrl) => `
   <!DOCTYPE html>
   <html>
@@ -149,29 +144,3 @@ const purchaseAdminNotificationHtml = (customerName, customerEmail, planDescript
   </html>
 `;
 exports.purchaseAdminNotificationHtml = purchaseAdminNotificationHtml;
-const emailHtml = (verifyUrl) => `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <style>
-      body { font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; }
-      .email-container { max-width: 700px; margin: auto; padding: 50px 20px; border: 1px solid #e0e0e0; }
-      .email-heading { text-align: center; text-transform: uppercase; color: #1877F2; }
-      .btn { display: inline-block; padding: 12px 24px; background-color: #1877F2; color: #ffffff; text-decoration: none; border-radius: 4px; margin-top: 20px; }
-    </style>
-  </head>
-  <body>
-    <div class="email-container">
-      <h2 class="email-heading">Welcome to Perfect Shelters</h2>
-      <p>Thank you for registering! Please click the button below to verify your account.</p>
-      <p><a href="${verifyUrl}" class="btn">Verify My Account</a></p>
-      <p>Or copy and paste this link into your browser:</p>
-      <p>${verifyUrl}</p>
-      <p>This link expires in 24 hours.</p>
-    </div>
-  </body>
-  </html>
-`;
-exports.emailHtml = emailHtml;

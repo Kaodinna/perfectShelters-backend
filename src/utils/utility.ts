@@ -4,14 +4,6 @@ import { AuthPayload } from "../interface/Auth.dto";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { APP_SECRET } from "../config/db.config";
 
-export const registerSchema = Joi.object().keys({
-  email: Joi.string().email().required(),
-  phone: Joi.string().required(),
-  password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
-  address: Joi.string().required(),
-});
 export const commentSchema = Joi.object().keys({
   fullName: Joi.string().required(),
   emailAddress: Joi.string().required(),
@@ -61,10 +53,6 @@ export const option = {
       label: "",
     },
   },
-};
-
-export const GenerateSalt = async () => {
-  return await bcrypt.genSalt();
 };
 
 export const GeneratePassword = async (password: string, salt: string) => {

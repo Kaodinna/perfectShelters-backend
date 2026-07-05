@@ -12,19 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validatePassword = exports.loginSchema = exports.Generatesignature = exports.GeneratePassword = exports.GenerateSalt = exports.option = exports.pictureSchema = exports.ConstructionSchema = exports.drawingSchema = exports.commentSchema = exports.registerSchema = void 0;
+exports.validatePassword = exports.loginSchema = exports.Generatesignature = exports.GeneratePassword = exports.option = exports.pictureSchema = exports.ConstructionSchema = exports.drawingSchema = exports.commentSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const db_config_1 = require("../config/db.config");
-exports.registerSchema = joi_1.default.object().keys({
-    email: joi_1.default.string().email().required(),
-    phone: joi_1.default.string().required(),
-    password: joi_1.default.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
-    firstName: joi_1.default.string().required(),
-    lastName: joi_1.default.string().required(),
-    address: joi_1.default.string().required(),
-});
 exports.commentSchema = joi_1.default.object().keys({
     fullName: joi_1.default.string().required(),
     emailAddress: joi_1.default.string().required(),
@@ -69,10 +61,6 @@ exports.option = {
         },
     },
 };
-const GenerateSalt = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield bcryptjs_1.default.genSalt();
-});
-exports.GenerateSalt = GenerateSalt;
 const GeneratePassword = (password, salt) => __awaiter(void 0, void 0, void 0, function* () {
     return yield bcryptjs_1.default.hash(password, salt);
 });
